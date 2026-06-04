@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     private int frameIndex = 0;
     private float timer = 0f;
 
+    int playerHP = 0;
+    int playerAttack = 0;
+
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -24,6 +28,24 @@ public class PlayerController : MonoBehaviour
 
         currentSprites = spriteDown;
         sr.sprite = currentSprites[0];
+
+        moveSpeed = GameDataManager.Instance.GetPlayerMoveSpeed();
+        playerHP =  GameDataManager.Instance.GetPlayerHp();
+        playerAttack = GameDataManager.Instance.GetPlayerAttack();
+    }
+
+    void Start()
+    {
+        if(GameDataManager.Instance.isTutorialFinished == 0)
+        {
+            // 튜토리얼 안 했을 경우 튜토리얼 오픈
+            Debug.Log("튜토리얼 오픈!");
+            GameDataManager.Instance.isTutorialFinished = 1;
+        }
+        else
+        {
+            // 튜토리얼 했을 경우 아무것도 안 함
+        }
     }
 
     public void OnMove(InputValue value)
@@ -87,5 +109,13 @@ public class PlayerController : MonoBehaviour
         frameIndex = 0;
         timer = 0f;
         sr.sprite = currentSprites[frameIndex];
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Enemy"))
+        {
+            GameManager.Instance.GameOver();
+        }
     }
 }
